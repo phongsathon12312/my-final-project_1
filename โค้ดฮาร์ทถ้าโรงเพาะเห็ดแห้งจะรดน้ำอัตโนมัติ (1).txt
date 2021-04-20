@@ -1,0 +1,54 @@
+#define BLYNK_PRINT Serial
+#include <ESP8266WiFi.h>
+#include <BlynkSimpleEsp8266.h>
+
+#include <TridentTD_LineNotify.h>
+#define LINE_TOKEN  "oM99PzIQOhrUyM4aXrk96Q8yGSicsNWMhpkqTaKpRGS"
+
+char auth[] = "1p6RS7EbuEympLNPkwa0g6Iaskhhj60t";
+
+char ssid[] = "realme 5";
+char pass[] = "11111111";
+
+int ledPin2 = D2; //สีเหลือง 
+int ledPin3 = D3; //สีเขียว
+int Relay1 = D6; // กำหนดขาใช้งานRelay
+
+int analogPin = A0; //ประกาศตัวแปร ให้ analogPin แทนขา analog ขาที่A0
+int val = 0;
+
+void setup() {
+  Serial.begin(115200);
+  Blynk.begin(auth, ssid, pass);
+  Serial.println(LINE.getVersion());
+   // กำหนด Line Token
+  LINE.setToken(LINE_TOKEN);
+  
+  pinMode(ledPin2, OUTPUT);  // sets the pin as output
+  pinMode(ledPin3, OUTPUT);  // sets the pin as output
+  pinMode(Relay1, OUTPUT); // กำหนดขาทำหน้าที่ให้ขา 6 เป็น OUTPUT
+  digitalWrite(Relay1, HIGH);
+}
+
+void loop() {
+  val = analogRead(analogPin);  //อ่านค่าสัญญาณ analog ขา5 ที่ต่อกับ Soil Moisture Sensor Module v1
+  Serial.print("val = "); // พิมพ์ข้อมความส่งเข้าคอมพิวเตอร์ "val = "
+  Serial.println(val); // พิมพ์ค่าของตัวแปร val
+  if (val < 800) {
+    
+    digitalWrite(Relay1, HIGH); //กระแสสลับ ให้ Relay สั่งปั้มน้ำทำงาน
+    digitalWrite(ledPin2, LOW); // สั่งให้ LED ที่ Pin2 ดับ
+    digitalWrite(ledPin3, HIGH); // สั่งให้ LED ที่ Pin3 ติดสว่าง
+  }
+  else {
+    LINE.notify("โรงเพาะเห็ดแห้ง กำลังรดน้ำอัตโนมัติ^^");
+    LINE.notifyPicture("https://storage.cokoh.com/content/image/image_5324_2_4.jpg");
+    digitalWrite(Relay1, LOW); //กระแสสลับ ให้ Relay หยุด
+    digitalWrite(ledPin2, HIGH); // สั่งให้ LED ที่ Pin2 ติดสว่าง
+    digitalWrite(ledPin3, LOW); // สั่งให้ LED ที่ Pin3 ดับ
+  }
+  delay(1000);
+
+  Blynk.run();
+ 
+}

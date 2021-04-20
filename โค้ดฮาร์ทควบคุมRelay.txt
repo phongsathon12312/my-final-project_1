@@ -1,0 +1,31 @@
+****ควบคุม Relay****
+
+#define BLYNK_PRINT Serial
+#include <BlynkSimpleEsp8266.h>
+
+char auth[] = "1p6RS7EbuEympLNPkwa0g6Iaskhhj60t";
+
+char ssid[] = "realme 5";
+char pass[] = "11111111";
+
+int Relay1 = D0; // กำหนดขาใช้งานRelay1
+int Relay2 = D1;
+
+void setup() {
+  //Serial.begin(115200);
+  pinMode(Relay1, OUTPUT); // กำหนดขาทำหน้าที่ให้ขา D0 เป็น OUTPUT
+  digitalWrite(Relay1, HIGH);
+
+  pinMode(Relay2, OUTPUT); // กำหนดขาทำหน้าที่ให้ขา D1 เป็น OUTPUT
+  digitalWrite(Relay2, HIGH);
+
+  Blynk.begin(auth, ssid, pass);
+  
+}
+
+void loop() {
+
+
+  
+    Blynk.run();
+  }
